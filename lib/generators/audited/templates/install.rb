@@ -1,7 +1,7 @@
 class <%= migration_class_name %> < <%= migration_parent %>
   def self.up
     create_table :audits, :force => true do |t|
-      t.column :auditable_id, :integer
+      t.column :auditable_id, :uuid
       t.column :auditable_type, :string
       t.column :associated_id, :integer
       t.column :associated_type, :string
