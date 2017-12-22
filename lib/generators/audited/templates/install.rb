@@ -3,7 +3,7 @@ class <%= migration_class_name %> < <%= migration_parent %>
     create_table :audits, :force => true do |t|
       t.column :auditable_id, :uuid
       t.column :auditable_type, :string
-      t.column :associated_id, :integer
+      t.column :associated_id, :uuid
       t.column :associated_type, :string
       t.column :user_id, :<%= options[:audited_user_id_column_type] %>
       t.column :user_type, :string
