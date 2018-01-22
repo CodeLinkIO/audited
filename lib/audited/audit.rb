@@ -36,9 +36,10 @@ module Audited
   class Audit < ::ActiveRecord::Base
     belongs_to :auditable,  polymorphic: true
     belongs_to :user,       polymorphic: true
+    belongs_to :actor,      polymorphic: true
     belongs_to :associated, polymorphic: true
 
-    before_create :set_version_number, :set_audit_user, :set_request_uuid, :set_remote_address
+    before_create :set_version_number, :set_audit_user, :set_audit_actor, :set_request_uuid, :set_remote_address
 
     cattr_accessor :audited_class_names
     self.audited_class_names = Set.new
@@ -120,6 +121,13 @@ module Audited
       ::Audited.store[:audited_user] = nil
     end
 
+    def self.as_actor(user, &block)
+      ::Audited.store[:audited_actor] = user
+      yield
+    ensure
+      ::Audited.store[:audited_actor] = nil
+    end
+
     # @private
     def self.reconstruct_attributes(audits)
       attributes = {}
@@ -159,6 +167,12 @@ module Audited
     def set_audit_user
       self.user ||= ::Audited.store[:audited_user] # from .as_user
       self.user ||= ::Audited.store[:current_user].try!(:call) # from Sweeper
+      nil # prevent stopping callback chains
+    end
+
+    def set_audit_actor
+      self.actor ||= ::Audited.store[:audited_actor] # from .as_user
+      self.actor ||= ::Audited.store[:current_actor].try!(:call) # from Sweeper
       nil # prevent stopping callback chains
     end
 

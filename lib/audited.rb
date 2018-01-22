@@ -2,7 +2,7 @@ require 'active_record'
 
 module Audited
   class << self
-    attr_accessor :ignored_attributes, :current_user_method, :audit_class
+    attr_accessor :ignored_attributes, :current_user_method, :current_actor_method, :audit_class
 
     def audit_class
       @audit_class || Audit
@@ -20,6 +20,7 @@ module Audited
   @ignored_attributes = %w(lock_version created_at updated_at created_on updated_on)
 
   @current_user_method = :current_user
+  @current_actor_method = :current_actor
 end
 
 require 'audited/auditor'
